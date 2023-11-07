@@ -1,15 +1,24 @@
-const board = {}
-
-let receivedData;
-
 const currentData = {}
 
-let currentPlayer = 'X' // true stands for "X" symbol
+let currentPlayer = 'X' 
 
 for (let i = 1; i < 10; i++) {
-    board[`box${i}`] = document.querySelector(`.box${i}`)
-    currentData[`box${i}`] = null
+  currentData[`box${i}`] = null
+  document.querySelector(`.box${i}`).addEventListener('click', function () {
+    makeMove(i)
+  })
 }
+
+async function makeMove(index) {
+  let boxKey = `box${index}`
+  if (currentData[boxKey] === null) {
+    currentData[boxKey] = currentPlayer
+    document.querySelector(`.${boxKey}`).textContent = currentPlayer
+    currentPlayer = currentPlayer === "X" ? "O" : "X";
+    await sendData()
+  }
+}
+
 
 async function sendData() {
     const response = await fetch("http://127.0.0.1:8000/", {
@@ -19,32 +28,44 @@ async function sendData() {
       },
       body: JSON.stringify(currentData),
     });
-    receivedData = await response.json();
+    const result = await response.json();
+    updateBoard(result);
 }
 
-console.log(receivedData)
-
-const selectBoard = document.querySelectorAll('.box')
-
-for (let i = 1; i < selectBoard.length + 1; i++) {
-  selectBoard[i - 1].addEventListener('click', function () {
-    if (currentPlayer === "X" && currentData[`box${i}`] === null) {
-      currentData[`box${i}`] = "X";
-      selectBoard[i - 1].textContent = receivedData[`box${i}`]
-      currentPlayer = "O";
+function updateBoard(data) {
+  for (let i = 1; i < 10; i++) {
+    let boxKey = `box${i}`
+    let box = document.querySelector(`.${boxKey}`)
+    if (box) {
+      box.textContent = data[boxKey]
     }
-    else if (currentPlayer === "O" && currentData[`box${i}`] === null) {
-      currentData[`box${i}`] = "O";
-      currentPlayer = "X";
-      selectBoard[i - 1].textContent = receivedData[`box${i}`];
-    }
-    sendData(currentData);
-  })
+  }
 }
 
 // Using setInterval in JavaScript
-setInterval(() => {
-  sendData(currentData);
-  console.log("test");
-}, 1000); 
+// setInterval(() => {
+//   sendData(currentData);
+//   console.log("test");
+// }, 1000); 
 // 1000 milliseconds = 1 second
+
+
+// const selectBoard = document.querySelectorAll(".box");
+
+// for (let i = 1; i < selectBoard.length + 1; i++) {
+//   selectBoard[i - 1].addEventListener('click', function () {
+//     if (currentPlayer === "X" && currentData[`box${i}`] === null) {
+//       currentData[`box${i}`] = "X";
+//       selectBoard[i - 1].textContent = downloadedData[`box${i}`]
+//       currentPlayer = "O";
+//     }
+//     else if (currentPlayer === "O" && currentData[`box${i}`] === null) {
+//       currentData[`box${i}`] = "O";
+//       currentPlayer = "X";
+//       selectBoard[i - 1].textContent = downloadedData[`box${i}`]
+//     }
+//     console.log(currentData);
+//     sendData(currentData);
+//   })
+// }
+

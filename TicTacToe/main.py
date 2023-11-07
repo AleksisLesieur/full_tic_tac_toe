@@ -43,13 +43,12 @@ class BoxData(BaseModel):
     box8: Optional[str] = None
     box9: Optional[str] = None
 
-@app.get("/")
+@app.get("/get")
 async def read_root(request: Request):
     return templates.TemplateResponse('index_refactored.html', {"request": request})
 
 @app.post("/")
 async def receive_data(box_data: BoxData):
-    print(box_data)
     return box_data
 
 # added code
