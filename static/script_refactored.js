@@ -42,12 +42,10 @@ function updateBoard(data) {
   }
 }
 
-// Using setInterval in JavaScript
-// setInterval(() => {
-//   sendData(currentData);
-//   console.log("test");
-// }, 1000); 
-// 1000 milliseconds = 1 second
+setInterval(() => {
+  sendData(currentData);
+  console.log("test");
+}, 1000); 
 
 
 // const selectBoard = document.querySelectorAll(".box");
