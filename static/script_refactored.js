@@ -46,24 +46,3 @@ setInterval(() => {
   sendData(currentData);
   console.log("test");
 }, 1000); 
-
-
-// const selectBoard = document.querySelectorAll(".box");
-
-// for (let i = 1; i < selectBoard.length + 1; i++) {
-//   selectBoard[i - 1].addEventListener('click', function () {
-//     if (currentPlayer === "X" && currentData[`box${i}`] === null) {
-//       currentData[`box${i}`] = "X";
-//       selectBoard[i - 1].textContent = downloadedData[`box${i}`]
-//       currentPlayer = "O";
-//     }
-//     else if (currentPlayer === "O" && currentData[`box${i}`] === null) {
-//       currentData[`box${i}`] = "O";
-//       currentPlayer = "X";
-//       selectBoard[i - 1].textContent = downloadedData[`box${i}`]
-//     }
-//     console.log(currentData);
-//     sendData(currentData);
-//   })
-// }
-
