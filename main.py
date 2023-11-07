@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends, HTTPException
+from fastapi import FastAPI, Request, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -10,10 +10,6 @@ from typing import Optional
 
 
 from fastapi.middleware.cors import CORSMiddleware
-
-from fastapi.responses import HTMLResponse
-
-from fastapi.templating import Jinja2Templates
 
 # models.Base.metadata.create_all(bind=engine)
 
