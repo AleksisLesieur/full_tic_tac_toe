@@ -1,19 +1,30 @@
 const currentData = {}
 
+let updatedData = {}
+
 let currentPlayer = 'X' 
 
 let updatedScore = 1 
+
+const button = document.querySelector('button')
+
+let count = 0
+
+button.addEventListener('click', function () {
+  count = count + 1
+
+  console.log(count)
+})
 
 
 for (let i = 1; i < 10; i++) {
   currentData[`box${i}`] = null
   document.querySelector(`.box${i}`).addEventListener('click', function (event) {
-    makeMove(i, event)
+    makeMove(i)
   })
 }
 
-async function makeMove(index, event) {
-  event.preventDefault()
+async function makeMove(index) {
   let boxKey = `box${index}`
   if (currentData[boxKey] === null) {
     currentData[boxKey] = currentPlayer
@@ -25,13 +36,22 @@ async function makeMove(index, event) {
 
 let gameId = null;
 
+async function getData() {
+  const result = await fetch(`http://127.0.0.1:8000/received`);
+  const finalResult = await result.json()
+  updatedData = finalResult[finalResult.length - 1]
+  console.log(updatedData)
+}
+
+getData()
+
 async function sendData() {
   console.log('send data first')
   const url = gameId === null ? "http://127.0.0.1:8000/game" : `http://127.0.0.1:8000/game/${gameId}`;
   const method = gameId === null ? "POST" : "PUT";
 
   const backendData = {
-    id: 1,
+    id: gameId,
     cell_1_1: currentData.box1,
     cell_1_2: currentData.box2,
     cell_1_3: currentData.box3,
@@ -43,13 +63,14 @@ async function sendData() {
     cell_3_3: currentData.box9,
   };
 
-    const response = await fetch(url, {
-      method: method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(backendData),
-    });
+  const response = await fetch(url, {
+    method: method,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(backendData),
+  });
+  
   const result = await response.json();
   console.log(result);
   
@@ -60,30 +81,9 @@ async function sendData() {
   updateBoard(result);
 }
 
-// function updateBoard(data) {
-//   for (let i = 1; i < 10; i++) {
-//     let boxKey = `box${i}`
-//     let box = document.querySelector(`.${boxKey}`)
-//     if (box) {
-//       console.log(data)
-//       box.textContent = data[boxKey]
-//     }
-//   }
-// }
-
-// function updateBoard(data) {
-//   for (let i = 1; i < 10; i++) {
-//     let boxKey = `box${i}`
-//     document.querySelector(`.${boxKey}`).textContent = data[boxKey]
-//   }
-// }
-
 function updateBoard(data) {
-  console.log("Data received for board update:", data); 
-
   for (let i = 1; i <= 9; i++) {
     let boxKey = `box${i}`;
-    console.log("Updating:", boxKey, "with value:", data[boxKey]);
     let box = document.querySelector(`.${boxKey}`);
     if (box) {
       box.textContent = data[boxKey] || "";

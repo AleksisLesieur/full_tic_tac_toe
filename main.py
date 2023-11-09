@@ -25,11 +25,9 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
-
 
 class BoxData(BaseModel):
     cell_1_1: Optional[str] = None
@@ -46,12 +44,6 @@ class BoxData(BaseModel):
 async def read_root(request: Request):
     return templates.TemplateResponse('index_refactored.html', {"request": request})
 
-# @app.post("/")
-# async def receive_data(box_data: BoxData):
-#     return box_data
-
-# added code
-
 
 def get_db():
     db = SessionLocal()
@@ -62,6 +54,10 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+@app.get("/received")
+async def read_games(db: db_dependency):
+    games = db.query(models.TicTacToe).all()
+    return games
 
 @app.post("/game")
 async def create_game(box_data: BoxData, db: db_dependency):
