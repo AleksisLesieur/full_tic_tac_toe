@@ -1,8 +1,9 @@
-from fastapi import FastAPI, Request, Depends, HTTPException
+from fastapi import FastAPI, Request, Depends, HTTPException, Path
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Annotated, Optional
+from starlette import status
 
 # database imports
 
@@ -33,12 +34,12 @@ class BoxData(BaseModel):
     cell_1_1: Optional[str] = None
     cell_1_2: Optional[str] = None
     cell_1_3: Optional[str] = None
-    cell_2_1: Optional[str] = None
-    cell_2_2: Optional[str] = None
-    cell_2_3: Optional[str] = None
-    cell_3_1: Optional[str] = None
-    cell_3_2: Optional[str] = None
-    cell_3_3: Optional[str] = None
+    cell_1_4: Optional[str] = None
+    cell_1_5: Optional[str] = None
+    cell_1_6: Optional[str] = None
+    cell_1_7: Optional[str] = None
+    cell_1_8: Optional[str] = None
+    cell_1_9: Optional[str] = None
 
 @app.get("/")
 async def read_root(request: Request):
@@ -59,6 +60,13 @@ async def read_games(db: db_dependency):
     games = db.query(models.TicTacToe).all()
     return games
 
+@app.get("/received/{game_id}", status_code=status.HTTP_200_OK)
+async def receive_game(db: db_dependency, game_id: int = Path(gt=0)):
+    game_data = db.query(models.TicTacToe).filter(models.TicTacToe.id == game_id).first()
+    if game_data is not None:
+        return game_data
+    raise HTTPException(status_code=404, detail='Todo not found.')
+
 @app.post("/game")
 async def create_game(box_data: BoxData, db: db_dependency):
     print(f"Received box data: {box_data}")  
@@ -66,12 +74,12 @@ async def create_game(box_data: BoxData, db: db_dependency):
         cell_1_1 = box_data.cell_1_1, 
         cell_1_2 = box_data.cell_1_2,
         cell_1_3 = box_data.cell_1_3, 
-        cell_2_1 = box_data.cell_2_1,
-        cell_2_2 = box_data.cell_2_2, 
-        cell_2_3 = box_data.cell_2_3,
-        cell_3_1 = box_data.cell_3_1, 
-        cell_3_2 = box_data.cell_3_2,
-        cell_3_3 = box_data.cell_3_3,
+        cell_1_4 = box_data.cell_1_4,
+        cell_1_5 = box_data.cell_1_5, 
+        cell_1_6 = box_data.cell_1_6,
+        cell_1_7 = box_data.cell_1_7, 
+        cell_1_8 = box_data.cell_1_8,
+        cell_1_9 = box_data.cell_1_9,
     )
     db.add(db_game)
     db.commit()
@@ -89,15 +97,14 @@ async def update_game(game_id: int, box_data: BoxData, db: db_dependency):
     db_game.cell_1_1 = box_data.cell_1_1 or db_game.cell_1_1
     db_game.cell_1_2 = box_data.cell_1_2 or db_game.cell_1_2
     db_game.cell_1_3 = box_data.cell_1_3 or db_game.cell_1_3
-    db_game.cell_2_1 = box_data.cell_2_1 or db_game.cell_2_1
-    db_game.cell_2_2 = box_data.cell_2_2 or db_game.cell_2_2
-    db_game.cell_2_3 = box_data.cell_2_3 or db_game.cell_2_3
-    db_game.cell_3_1 = box_data.cell_3_1 or db_game.cell_3_1
-    db_game.cell_3_2 = box_data.cell_3_2 or db_game.cell_3_2
-    db_game.cell_3_3 = box_data.cell_3_3 or db_game.cell_3_3
+    db_game.cell_1_4 = box_data.cell_1_4 or db_game.cell_1_4
+    db_game.cell_1_5 = box_data.cell_1_5 or db_game.cell_1_5
+    db_game.cell_1_6 = box_data.cell_1_6 or db_game.cell_1_6
+    db_game.cell_1_7 = box_data.cell_1_7 or db_game.cell_1_7
+    db_game.cell_1_8 = box_data.cell_1_8 or db_game.cell_1_8
+    db_game.cell_1_9 = box_data.cell_1_9 or db_game.cell_1_9
     
     db.commit()
     db.refresh(db_game)
     return db_game
-
 
